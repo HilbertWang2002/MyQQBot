@@ -1,15 +1,15 @@
-# -*- coding: UTF-8 -*-
+﻿# -*- coding: UTF-8 -*-
 import nonebot,pytz,requests,asyncio,time,re
 from datetime import datetime
 from aiocqhttp.exceptions import Error as CQHttpError
 from config import KEYWORDS as keywords
 
-@nonebot.scheduler.scheduled_job('cron', hour='*', minute = '9')
+@nonebot.scheduler.scheduled_job('cron', hour='*', minute = '8')
 async def _():
     #获取机器人
     bot = nonebot.get_bot()
     #获取当前时间
-    now = datetime.now(pytz.timezone('Asia/Shanghai'))
+    now = datetime.now(pytz.timezone('Asia/Jakarta'))
     #定义backup的地址，并获取
     url = f'https://github.com/martinwu42/pkuholebackup/raw/master/archive/{now.year}'+'%02d' % now.month +f'/pkuhole{now.year}'+'%02d' % now.month + '%02d' % now.day +'.txt'
     r = requests.get(url)
@@ -24,7 +24,7 @@ async def _():
         if i[1] == 'p':
             sorted_msgs.append(i)
         if i[1] == 'c':
-            sorted_msgs[-1] = sorted_msgs[-1] + '\n' + '\n'.join(i.split('\n')[1::-2])
+            sorted_msgs[-1] = sorted_msgs[-1] + '\n' + '\n'.join(i.split('\n')[1:])
     #将整理后的消息和序号、时间一一对应
     sorted_msgs_dic = {}#格式是：{编号:[时间（秒）,内容]
     for i in sorted_msgs:
@@ -43,7 +43,7 @@ async def _():
     with open('./temp/__1','w',encoding = 'utf-8') as code:
         code.write(str(maxindex))
     #指定消息与消息之间的时间间隔
-    time_to_sleep = 3590//len(msgs_to_send)
+    time_to_sleep = 3500//len(msgs_to_send)
     #发送消息      
     for i in msgs_to_send[::-1]:
         await send_by_block(i,bot,keywords=keywords)
@@ -60,5 +60,6 @@ async def send_by_block(msgs,bot,keywords):
                 if j in msgs:
                     await bot.send_group_msg(group_id=750501153,
                                  message = '\n'.join(msgsraws[i*10:(i+1)*10]))
+                    break
     except CQHttpError:
         pass
