@@ -22,9 +22,9 @@ async def _():
     sorted_msgs = []
     for i in re.split(r'\s+(?=#c|#p)',all_msgs):
         if i[1] == 'p':
-            sorted_msgs.append(i[:-2])
+            sorted_msgs.append(i)
         if i[1] == 'c':
-            sorted_msgs[-1] = sorted_msgs[-1] + '\n' + '\n'.join(i.split('\n')[1::-2])
+            sorted_msgs[-1] = sorted_msgs[-1] + '\n' + '\n'.join(i.split('\n')[1:-2])
     #将整理后的消息和序号、时间一一对应
     sorted_msgs_dic = {}#格式是：{编号:[时间（秒）,内容]
     for i in sorted_msgs:
