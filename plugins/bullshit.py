@@ -1,5 +1,5 @@
 # -*- coding:gbk -*-
-from nonebot import on_command, CommandSession
+from nonebot import on_command, CommandSession, on_natural_language, NLPSession, IntentCommand
 import random,os,re
 
 
@@ -45,17 +45,17 @@ def 另起一段():
 @on_command('bullshit', aliases=('写文章'))
 async def bullshit(session: CommandSession):
     xx = session.get('text')
-    for x in xx:
-        tmp = str()
-        while ( len(tmp) < 2000 ) :
-            分支 = random.randint(0,100)
-            if 分支 < 5:
-                tmp += 另起一段()
-            elif 分支 < 20 :
-                tmp += 来点名人名言()
-            else:
-                tmp += next(下一句废话)
-        tmp = tmp.replace("x",xx)
+    tmp = str()
+    while ( len(tmp) < 2000 ) :
+        分支 = random.randint(0,100)
+        if 分支 < 5:
+            tmp += 另起一段()
+        elif 分支 < 20 :
+            tmp += 来点名人名言()
+        else:
+            tmp += next(下一句废话)
+    tmp = tmp.replace("x",xx)
+    
     textarr = tmp.split('\n')
     textarrfi = []
     for i in textarr:
@@ -72,3 +72,8 @@ async def _(session: CommandSession):
     stripped_arg = session.current_arg_text.strip()
     session.state['text'] = stripped_arg
     session.state[session.current_key] = stripped_arg
+    
+@on_natural_language(keywords={'写文章'})
+async def _(session: NLPSession):
+    # 返回意图命令，前两个参数必填，分别表示置信度和意图命令名
+    return IntentCommand(90.0, 'bullshit')
